@@ -13,13 +13,13 @@ public extension Curve25519.Signing {
     /// A Curve25519 private key used to create cryptographic signatures.
     struct PrivateKey {
         
-        private let bytes: [UInt8]
+        private var bytes = [UInt8](repeating: 0, count: 32)
         
         /// The key (32 bytes)
-        private let privateKeyBytes: [UInt8]
+        private var privateKeyBytes = [UInt8]()
         
         /// The public key bytes
-        private let publicKeyBytes: [UInt8]
+        private var publicKeyBytes = [UInt8]()
         
         /**
          Creates a random Curve25519 private key for signing.
@@ -51,14 +51,14 @@ public extension Curve25519.Signing {
                         ed25519_create_keypair(
                             pP.baseAddress,
                             sP.baseAddress,
-                            s.bindMemory(to: UInt8.self).baseAddress)
+                            s.bindMemory(to: UInt8.self).baseAddress
+                        )
+                        self.bytes = [UInt8](s)
+                        self.privateKeyBytes = [UInt8](sP)
+                        self.publicKeyBytes = [UInt8](pP)
                     }
                 }
             }
-            
-            self.bytes = bytes
-            self.privateKeyBytes = priv
-            self.publicKeyBytes = pub
         }
         
         /// The corresponding public key.
